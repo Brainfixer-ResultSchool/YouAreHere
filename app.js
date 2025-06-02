@@ -17,10 +17,17 @@ document.addEventListener('click', (e) => {
     if (flag.classList.contains('active')) {
       flag.classList.remove('active');
     } else {
-      flagsContainer
-        .querySelectorAll('.flag')
-        .forEach((f) => f.classList.remove('active'));
       flag.classList.add('active');
+
+      setTimeout(() => {
+        flagsContainer.querySelectorAll('.flag').forEach((f) => {
+          if (f !== flag && f.classList.contains('active')) {
+            f.classList.remove('active');
+            sound.currentTime = 0;
+            sound.play();
+          }
+        });
+      }, 500);
     }
   }
 });
