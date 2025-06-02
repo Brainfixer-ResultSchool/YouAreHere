@@ -5,17 +5,23 @@ const GEOCODE_API_KEY = '1313977089914138472x18455';
 const btn = document.querySelector('.footer__btn');
 const flagsContainer = document.querySelector('.flags');
 
-const snd = new Audio();
-snd.srс = 'sound.mp3';
+const sound = new Audio();
+sound.src = 'snd.mp3';
 
 document.addEventListener('click', (e) => {
-  flagsContainer
-    .querySelectorAll('.flag')
-    .forEach((f) => f.classList.remove('active'));
   const flag = e.target.closest('.flag');
+
   if (flag) {
-    flag.classList.add('active');
-    snd.play();
+    sound.play();
+
+    if (flag.classList.contains('active')) {
+      flag.classList.remove('active');
+    } else {
+      flagsContainer
+        .querySelectorAll('.flag')
+        .forEach((f) => f.classList.remove('active'));
+      flag.classList.add('active');
+    }
   }
 });
 
@@ -28,13 +34,13 @@ function displayCountry(data, neighbour = false) {
 			<div class="flag__back">
 				<h3 class="country__name">${data.name.common}</h3>
 				<h4 class="country__region">${data.region}</h4>
-				<div class="country__info-img">👨‍👩‍👧‍👦</div>
+				<div class="country__info-img">&#128106;</div>
 				<p class="country__row">
 					${(+data.population / 1000000).toFixed(1)} million
 				</p>
-				<div class="country__info-img">🗣️</div>
+				<div class="country__info-img">&#128539;</div>
 				<p class="country__row">${Object.values(data.languages).join('<br>')}</p>
-				<div class="country__info-img">💰</div>
+				<div class="country__info-img">&#128181;</div>
 				<p class="country__row">
 				${Object.values(data.currencies)
           .map((c) => `${c.symbol}: ${c.name}`)
