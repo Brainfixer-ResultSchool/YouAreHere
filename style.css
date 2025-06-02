@@ -35,11 +35,11 @@ body {
   transform: scale(1.1);
 }
 
-.flag:active .flag__front {
+.flag.active .flag__front {
   transform: rotateY(180deg);
 }
 
-.flag:active .flag__back {
+.flag.active .flag__back {
   transform: rotateY(0deg);
 }
 

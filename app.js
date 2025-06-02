@@ -5,6 +5,20 @@ const GEOCODE_API_KEY = '1313977089914138472x18455';
 const btn = document.querySelector('.footer__btn');
 const flagsContainer = document.querySelector('.flags');
 
+const snd = new Audio();
+snd.srс = 'sound.mp3';
+
+document.addEventListener('click', (e) => {
+  flagsContainer
+    .querySelectorAll('.flag')
+    .forEach((f) => f.classList.remove('active'));
+  const flag = e.target.closest('.flag');
+  if (flag) {
+    flag.classList.add('active');
+    snd.play();
+  }
+});
+
 function displayCountry(data, neighbour = false) {
   const html = `
 		<div class="flag ${neighbour ? 'flag-neighbour' : ''}">
@@ -69,26 +83,24 @@ function getCountryData(country) {
     .catch((err) => console.log(err.message));
 }
 
-function displayCountryByGPS(lat, lng) {
-  fetch(`https://geocode.xyz/${lat},${lng}?geoit=json&auth=${GEOCODE_API_KEY}`)
-    .then((response) => {
-      if (!response.ok) throw 'Не удалось выполнить геокодирование.';
-      return response.json();
-    })
-    .then((data) => {
-      const { country, city } = data;
-      console.log(`You are in ${city}, ${country}`);
-      return country.toLowerCase();
-    })
-    .then((country) => {
-      getCountryData(country);
-    })
-    .catch((err) => console.error(err.message));
+async function displayCountryByGPS(lat, lng) {
+  const response = await fetch(
+    `https://geocode.xyz/${lat},${lng}?geoit=json&auth=${GEOCODE_API_KEY}`
+  );
+  if (!response.ok) return;
+  const json = await response.json();
+  const { country, city } = json;
+  console.log(`You are in ${city}, ${country}`);
+
+  getCountryData(country.toLowerCase());
 }
 
 btn.addEventListener('click', () => {
-  navigator.geolocation.getCurrentPosition((pos) => {
-    const { latitude, longitude } = pos.coords;
-    displayCountryByGPS(latitude, longitude);
-  });
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const { latitude, longitude } = pos.coords;
+      displayCountryByGPS(latitude, longitude);
+    },
+    () => displayCountryByGPS(55.751, 37.617)
+  );
 });
