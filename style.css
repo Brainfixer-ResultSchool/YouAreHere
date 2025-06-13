@@ -75,9 +75,10 @@ body {
   text-transform: uppercase;
   position: absolute;
   width: 100%;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   padding: 0.25rem;
   background: white;
+  color: #000;
   font-weight: 600;
   text-align: center;
 }

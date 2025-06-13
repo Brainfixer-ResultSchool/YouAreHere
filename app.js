@@ -1,6 +1,6 @@
 'use strict';
 
-const GEOCODE_API_KEY = '1313977089914138472x18455';
+const GEOCODE_API_KEY = '109251645752138177464x127065';
 
 const btn = document.querySelector('.footer__btn');
 const flagsContainer = document.querySelector('.flags');
@@ -27,8 +27,16 @@ document.addEventListener('click', (e) => {
             sound.play();
           }
         });
-      }, 500);
+      }, 300);
     }
+  } else {
+    flagsContainer.querySelectorAll('.flag').forEach((f) => {
+      if (f.classList.contains('active')) {
+        f.classList.remove('active');
+        sound.currentTime = 0;
+        sound.play();
+      }
+    });
   }
 });
 
@@ -37,6 +45,7 @@ function displayCountry(data, neighbour = false) {
 		<div class="flag ${neighbour ? 'flag-neighbour' : ''}">
 			<div class="flag__front">
 				<img class="flag__img" src="${data.flags.png}" />
+        <h3 class="country__name">${data.name.common}</h3>
 			</div>
 			<div class="flag__back">
 				<h3 class="country__name">${data.name.common}</h3>
@@ -67,8 +76,7 @@ function getCountryData(country) {
       if (!response.ok) throw 'Не удалось получить данные.';
       return response.json();
     })
-    .then((data) => {
-      [data] = data;
+    .then(([data]) => {
       displayCountry(data);
       return data.borders;
     })
@@ -88,8 +96,7 @@ function getCountryData(country) {
       return Promise.all(borderResponses.map((response) => response.json()));
     })
     .then((countries) => {
-      countries.forEach((country) => {
-        [country] = country;
+      countries.forEach(([country]) => {
         displayCountry(country, true);
       });
     })
@@ -101,8 +108,7 @@ async function displayCountryByGPS(lat, lng) {
     `https://geocode.xyz/${lat},${lng}?geoit=json&auth=${GEOCODE_API_KEY}`
   );
   if (!response.ok) return;
-  const json = await response.json();
-  const { country, city } = json;
+  const { country, city } = await response.json();
   console.log(`You are in ${city}, ${country}`);
 
   getCountryData(country.toLowerCase());
@@ -110,8 +116,7 @@ async function displayCountryByGPS(lat, lng) {
 
 btn.addEventListener('click', () => {
   navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      const { latitude, longitude } = pos.coords;
+    ({ coords: { latitude, longitude } }) => {
       displayCountryByGPS(latitude, longitude);
     },
     () => displayCountryByGPS(55.751, 37.617)
